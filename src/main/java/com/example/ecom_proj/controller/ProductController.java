@@ -4,6 +4,8 @@ import com.example.ecom_proj.model.Product;
 import com.example.ecom_proj.repo.ProductRepo;
 import com.example.ecom_proj.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,22 +20,21 @@ public class ProductController {
 
 
     @GetMapping("/products")
-    public List<Product> getAllProducts( ){
+    public ResponseEntity<List<Product>> getAllProducts( ){
 
-        return service.getAllProducts();
+        return new ResponseEntity<>(service.getAllProducts(), HttpStatus.OK);
     }
 
-    @Autowired
-    private ProductRepo repo;
-    @GetMapping("/test")
-    public List<Product> testRepo() {
-        return repo.findAll(); // Direct repository call
-    }
 
     //return one product
     @GetMapping("/product/{id}")
-    public Product getProduct(@PathVariable int id){
-        return service.getProductById(id);
+    public ResponseEntity<Product> getProduct(@PathVariable int id){
+
+        Product product=service.getProductById(id);
+        if(product != null)
+            return new ResponseEntity<>(product, HttpStatus.OK);
+        else
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
     }
 
